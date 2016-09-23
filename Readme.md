@@ -1,6 +1,6 @@
 <p align="left">
-    <a href="https://vgo.io">
-     <img  width="250" src="https://github.com/corego/vgo/blob/master/assets/images/vgo.png"></a>
+    <a href="https://gomqtt.com">
+     <img  width="250" src="https://github.com/corego/gomqtt/blob/master/assets/images/logo.png"></a>
 </p>
 Official Site
 ------------
