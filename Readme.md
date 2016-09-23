@@ -1,7 +1,3 @@
-<p align="left">
-    <a href="https://gomqtt.com">
-     <img  width="200" src="https://github.com/corego/gomqtt/blob/master/assets/images/logo.png"></a>
-</p>
 Official Site
 ------------
 <a href="http://gomqtt.com">http://gomqtt.com</a>
