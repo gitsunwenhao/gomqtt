@@ -1,6 +1,6 @@
 <p align="left">
     <a href="https://gomqtt.com">
-     <img  width="250" src="https://github.com/corego/gomqtt/blob/master/assets/images/logo.png"></a>
+     <img  width="200" src="https://github.com/corego/gomqtt/blob/master/assets/images/logo.png"></a>
 </p>
 Official Site
 ------------
