@@ -48,6 +48,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+
+	RootCmd.Flags().BoolP("static_config", "c", false, "using static config")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -67,8 +69,9 @@ func initConfig() {
 }
 
 func start(cmd *cobra.Command, args []string) {
+	isStatic, _ := cmd.Flags().GetBool("static_config")
 	g := gate.New()
-	g.Start()
+	g.Start(isStatic)
 
 	// 等待服务器停止信号
 	chSig := make(chan os.Signal)

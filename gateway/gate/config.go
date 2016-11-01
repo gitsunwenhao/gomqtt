@@ -21,8 +21,16 @@ type Config struct {
 
 var Conf = &Config{}
 
-func loadConfig() {
-	contents, err := ioutil.ReadFile("/etc/gomqtt/gateway.toml")
+func loadConfig(staticConf bool) {
+	var contents []byte
+	var err error
+
+	if staticConf {
+		//静态配置
+		contents, err = ioutil.ReadFile("configs/gateway.toml")
+	} else {
+		contents, err = ioutil.ReadFile("/etc/gomqtt/gateway.toml")
+	}
 
 	if err != nil {
 		log.Fatal("load config error", zap.Error(err))
