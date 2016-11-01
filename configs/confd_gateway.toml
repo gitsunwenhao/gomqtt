@@ -1,0 +1,10 @@
+[template]
+src = "confd_gateway.conf.tmpl"
+dest = "/etc/gomqtt/gateway.toml"
+keys = [
+        "/gomqtt/gateway/version",
+        "/gomqtt/gateway/isdebug",
+        "/gomqtt/gateway/loglevel",
+        "/gomqtt/gateway/logpath",
+]
+reload_cmd = "/Users/sunfei/Documents/GoLibs/src/github.com/aiyun/gomqtt/gateway/gateway reload"
