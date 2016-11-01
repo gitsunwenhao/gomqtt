@@ -47,5 +47,4 @@ func loadConfig(staticConf bool) {
 
 	// 初始化Logger
 	InitLogger(Conf.Common.LogPath, Conf.Common.LogLevel, Conf.Common.IsDebug)
-
 }
