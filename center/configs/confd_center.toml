@@ -1,0 +1,10 @@
+[template]
+src = "confd_center.conf.tmpl"
+dest = "/etc/gomqtt/center.toml"
+keys = [
+        "/gomqtt/center/version",
+        "/gomqtt/center/isdebug",
+        "/gomqtt/center/loglevel",
+        "/gomqtt/center/logpath",
+]
+reload_cmd = "/Users/scc/Documents/gowork/src/github.com/aiyun/gomqtt/center/center reload"
