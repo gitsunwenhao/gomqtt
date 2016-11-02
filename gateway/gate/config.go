@@ -17,6 +17,10 @@ type Config struct {
 		LogLevel string
 		LogPath  string
 	}
+
+	Provider struct {
+		Invoked []string
+	}
 }
 
 var Conf = &Config{}

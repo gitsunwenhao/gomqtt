@@ -6,5 +6,6 @@ keys = [
         "/gomqtt/gateway/isdebug",
         "/gomqtt/gateway/loglevel",
         "/gomqtt/gateway/logpath",
+        "/gomqtt/gateway/invoked",
 ]
 reload_cmd = "/Users/sunfei/Documents/GoLibs/src/github.com/aiyun/gomqtt/gateway/gateway reload"

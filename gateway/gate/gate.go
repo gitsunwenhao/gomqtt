@@ -1,11 +1,6 @@
 package gate
 
-import (
-	"fmt"
-
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/standard"
-)
+import "fmt"
 
 type Gate struct {
 }
@@ -15,18 +10,13 @@ func New() *Gate {
 }
 
 func (g *Gate) Start(isStatic bool) {
+	// init configurations
 	fmt.Println(isStatic)
 	loadConfig(isStatic)
 
-	go httpStart()
-}
+	// init providers
+	providersStart()
 
-func httpStart() {
-	// 启动Http服务
-	e := echo.New()
-
-	// 启动配置热更新
-	e.GET("/reload", reload)
-
-	e.Run(standard.New(":8907"))
+	// init addmin service
+	go adminStart()
 }
