@@ -11,3 +11,10 @@ invoked = [
         "{{.}}",
         {{end}}
 ]
+
+#  tcp provider
+tcp_addr = "{{getv "/gomqtt/gateway/tcpaddr"}}"
+#tls related
+enable_tls = {{getv "/gomqtt/gateway/enabletls"}}
+tls_cert = "{{getv "/gomqtt/gateway/tlscert"}}"
+tls_key = "{{getv "/gomqtt/gateway/tlskey"}}"

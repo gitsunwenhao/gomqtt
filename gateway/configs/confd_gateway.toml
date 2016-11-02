@@ -7,5 +7,9 @@ keys = [
         "/gomqtt/gateway/loglevel",
         "/gomqtt/gateway/logpath",
         "/gomqtt/gateway/invoked",
+        "/gomqtt/gateway/tcpaddr",
+        "/gomqtt/gateway/enabletls",
+        "/gomqtt/gateway/tlscert",
+        "/gomqtt/gateway/tlskey",
 ]
 reload_cmd = "/Users/sunfei/Documents/GoLibs/src/github.com/aiyun/gomqtt/gateway/gateway reload"

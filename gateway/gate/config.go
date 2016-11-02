@@ -19,7 +19,11 @@ type Config struct {
 	}
 
 	Provider struct {
-		Invoked []string
+		Invoked   []string
+		TcpAddr   string
+		EnableTls bool
+		TlsCert   string
+		TlsKey    string
 	}
 }
 

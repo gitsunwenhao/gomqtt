@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/corego/mqtt/protocol"
+	"github.com/aiyun/gomqtt/mqtt/protocol"
 )
 
 const (

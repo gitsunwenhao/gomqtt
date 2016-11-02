@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net"
 
-	proto "github.com/corego/mqtt/protocol"
+	proto "github.com/aiyun/gomqtt/mqtt/protocol"
 )
 
 // ReadPacket read one packet from conn
-func ReadPacket(conn net.Conn) (proto.Packet, int, error) {
+func ReadPacket(conn net.Conn) (proto.Packet, []byte, int, error) {
 	var (
 		// buf for head
 		b = make([]byte, 5)
@@ -21,7 +21,7 @@ func ReadPacket(conn net.Conn) (proto.Packet, int, error) {
 	for {
 		_, err := conn.Read(b[n : n+1])
 		if err != nil {
-			return nil, 0, err
+			return nil, b, 0, err
 		}
 
 		// 第一个字节是packet标志位，第二个字节开始为packet body的长度编码，采用的是变长编码
@@ -40,16 +40,16 @@ func ReadPacket(conn net.Conn) (proto.Packet, int, error) {
 	copy(buf, b)
 	_, err := conn.Read(buf)
 	if err != nil {
-		return nil, 0, err
+		return nil, buf, 0, err
 	}
 
 	msg, err := mtype.New()
 	dn, err := msg.Decode(buf)
 	if err != nil {
-		return nil, 0, err
+		return nil, buf, 0, err
 	}
 
-	return msg, dn, nil
+	return msg, nil, dn, nil
 }
 
 // Read a raw message from conn

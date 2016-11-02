@@ -3,7 +3,7 @@ package service
 import (
 	"net"
 
-	"github.com/corego/mqtt/protocol"
+	"github.com/aiyun/gomqtt/mqtt/protocol"
 )
 
 func connectPacket(conn net.Conn) (*protocol.ConnectPacket, error) {
