@@ -14,3 +14,8 @@ Features
  - Highly customizable
  - Extreme high performance
  - Easy installing and using
+
+Functionality
+-------------
+  - Plugins and Modular
+  - Static Config Or Configuration downstream and hot reload(with confd and etcd)
