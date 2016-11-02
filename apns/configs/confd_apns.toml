@@ -1,0 +1,10 @@
+[template]
+src = "apns.conf.tmpl"
+dest = "/etc/gomqtt/apns.toml"
+keys = [
+        "/gomqtt/apns/version",
+        "/gomqtt/apns/isdebug",
+        "/gomqtt/apns/loglevel",
+        "/gomqtt/apns/logpath",
+]
+reload_cmd = "/Users/sunfei/Documents/GoLibs/src/github.com/aiyun/gomqtt/apns/apns reload"

@@ -1,0 +1,5 @@
+[common]
+version = "0.0.1"
+is_debug = true
+log_level = "DEBUG"
+log_path = "./out.log"
