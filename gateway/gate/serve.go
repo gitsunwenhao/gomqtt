@@ -21,9 +21,6 @@ type connInfo struct {
 	inCount  int
 	outCount int
 
-	recvCh chan *proto.Packet
-	stopCh chan bool
-
 	stopped bool
 }
 
@@ -44,18 +41,14 @@ func serve(c net.Conn) {
 		return
 	}
 
-	ci.recvCh = make(chan *proto.Packet, 100)
-	ci.stopCh = make(chan bool)
-
+	go recvPacket(ci)
 	// loop reading data
 	for {
-		go recvPacket(ci)
-
-		select {
-		case <-ci.stopCh:
+		if ci.stopped {
 			goto STOP
-
 		}
+
+		select {}
 	}
 
 STOP:
