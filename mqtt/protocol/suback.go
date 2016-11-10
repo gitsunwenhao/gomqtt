@@ -76,32 +76,32 @@ func (sp *SubackPacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (sp *SubackPacket) Encode(dst []byte) (int, error) {
+func (sp *SubackPacket) Encode() (int, []byte, error) {
 
 	for i, code := range sp.returnCodes {
 		if code != 0x00 && code != 0x01 && code != 0x02 && code != 0x80 {
-			return 0, fmt.Errorf("suback/Encode: Invalid return code %d for topic %d", code, i)
+			return 0, nil, fmt.Errorf("suback/Encode: Invalid return code %d for topic %d", code, i)
 		}
 	}
 
-	hl := sp.header.msglen()
+	//hl := sp.header.msglen()
 	ml := sp.msglen()
 
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("suback/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
+	// if len(dst) < hl+ml {
+	// 	return 0, fmt.Errorf("suback/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
 
 	if err := sp.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
-
+	dst := make([]byte, sp.Len())
 	total := 0
 
 	//编码固定报头
 	n, err := sp.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return 0, nil, err
 	}
 
 	//编码PackeID
@@ -112,7 +112,7 @@ func (sp *SubackPacket) Encode(dst []byte) (int, error) {
 	copy(dst[total:], sp.returnCodes)
 	total += len(sp.returnCodes)
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (sp *SubackPacket) msglen() int {

@@ -280,25 +280,25 @@ func (cp *ConnectPacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (cp *ConnectPacket) Encode(dst []byte) (int, error) {
+func (cp *ConnectPacket) Encode() (int, []byte, error) {
 	if cp.Type() != CONNECT {
-		return 0, fmt.Errorf("connect/Encode: Invalid message type. Expecting %d, got %d", CONNECT, cp.Type())
+		return 0, nil, fmt.Errorf("connect/Encode: Invalid message type. Expecting %d, got %d", CONNECT, cp.Type())
 	}
 
 	_, ok := SupportedVersions[cp.version]
 	if !ok {
-		return 0, ErrInvalidProtocolVersion
+		return 0, nil, ErrInvalidProtocolVersion
 	}
 
-	hl := cp.header.msglen()
+	// hl := cp.header.msglen()
 	ml := cp.msglen()
 
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("connect/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
-
+	// if len(dst) < hl+ml {
+	// 	return 0, nil, fmt.Errorf("connect/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
+	dst := make([]byte, cp.Len())
 	if err := cp.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
 
 	total := 0
@@ -306,16 +306,16 @@ func (cp *ConnectPacket) Encode(dst []byte) (int, error) {
 	n, err := cp.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return total, nil, err
 	}
 
 	n, err = cp.encodeMessage(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return total, nil, err
 	}
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (cp *ConnectPacket) encodeMessage(dst []byte) (int, error) {

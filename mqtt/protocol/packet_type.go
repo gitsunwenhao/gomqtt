@@ -163,6 +163,11 @@ func (pt PacketType) DefaultFlags() byte {
 	}
 }
 
+//对应报文类型的默认标识位  兼容重发报文
+func (pt PacketType) DefaultFlags10() byte {
+	return 10
+}
+
 // New creates a new message based on the message type. It is a shortcut to call
 // one of the New*Message functions. If an error is returned then the message type
 // is invalid.

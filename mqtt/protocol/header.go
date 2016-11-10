@@ -131,7 +131,7 @@ func (h *header) decode(src []byte) (int, error) {
 	}
 
 	//只有PUBLISH才有Flag位，其它的Flag都是默认的
-	if mtype != PUBLISH && h.Flags() != mtype.DefaultFlags() {
+	if mtype != PUBLISH && h.Flags() != mtype.DefaultFlags() && h.Flags() != mtype.DefaultFlags10() {
 		return total, fmt.Errorf("header/Decode3: Invalid message (%d) flags. Expecting %d, got %d",
 			mtype, mtype.DefaultFlags(), h.Flags())
 	}

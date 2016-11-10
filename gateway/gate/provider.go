@@ -10,10 +10,10 @@ func providersStart() {
 		switch v {
 		case "tcp":
 			tp := &TcpProvider{}
-			tp.Start()
+			go tp.Start()
 		case "websocket":
 			wp := &WsProvider{}
-			wp.Start()
+			go wp.Start()
 		default:
 			Logger.Fatal("invalid provider,please check your configuration")
 		}

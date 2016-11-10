@@ -96,29 +96,29 @@ func (up *UnsubscribePacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (up *UnsubscribePacket) Encode(dst []byte) (int, error) {
-	hl := up.header.msglen()
+func (up *UnsubscribePacket) Encode() (int, []byte, error) {
+	//hl := up.header.msglen()
 	ml := up.msglen()
 
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("unsubscribe/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
+	// if len(dst) < hl+ml {
+	// 	return 0, fmt.Errorf("unsubscribe/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
 
 	if err := up.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
-
+	dst := make([]byte, up.Len())
 	total := 0
 
 	n, err := up.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return 0, nil, err
 	}
 
 	// UNSUBSCRIBE必须要有PackeID
 	if up.PacketID() == 0 {
-		return total, fmt.Errorf("subscribe/Encode: invalid packetid %d", up.PacketID())
+		return 0, nil, fmt.Errorf("subscribe/Encode: invalid packetid %d", up.PacketID())
 	}
 
 	binary.BigEndian.PutUint16(dst[total:total+2], up.packetID)
@@ -128,11 +128,11 @@ func (up *UnsubscribePacket) Encode(dst []byte) (int, error) {
 		n, err := writeLPBytes(dst[total:], t)
 		total += n
 		if err != nil {
-			return total, err
+			return 0, nil, err
 		}
 	}
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (up *UnsubscribePacket) msglen() int {

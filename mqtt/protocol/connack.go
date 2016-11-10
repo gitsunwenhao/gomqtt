@@ -85,26 +85,27 @@ func (cp *ConnackPacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (cp *ConnackPacket) Encode(dst []byte) (int, error) {
+func (cp *ConnackPacket) Encode() (int, []byte, error) {
 	// 固定报头长度
-	hl := cp.header.msglen()
+	// hl := cp.header.msglen()
 	// 报体长度:可变报头长度 ＋ 报体长度,Connack是2
 	ml := cp.msglen()
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("connack/Encode.2: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
+	// if len(dst) < hl+ml {
+	// 	return 0, fmt.Errorf("connack/Encode.2: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
 	// 设置剩余长度
 	if err := cp.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
 
+	dst := make([]byte, cp.Len())
 	total := 0
 
 	// 设置固定报头
 	n, err := cp.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return 0, err
+		return 0, nil, err
 	}
 
 	// 设置连接确认标志
@@ -115,12 +116,12 @@ func (cp *ConnackPacket) Encode(dst []byte) (int, error) {
 
 	// 设置返回码
 	if cp.returnCode > 5 {
-		return total, fmt.Errorf("connack/Encode.3: Invalid CONNACK return code (%d)", cp.returnCode)
+		return total, nil, fmt.Errorf("connack/Encode.3: Invalid CONNACK return code (%d)", cp.returnCode)
 	}
 	dst[total] = cp.returnCode.Value()
 	total++
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (cp *ConnackPacket) msglen() int {

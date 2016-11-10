@@ -127,29 +127,30 @@ func (sp *SubscribePacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (sp *SubscribePacket) Encode(dst []byte) (int, error) {
-	hl := sp.header.msglen()
+func (sp *SubscribePacket) Encode() (int, []byte, error) {
+	// hl := sp.header.msglen()
 	ml := sp.msglen()
 
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("subscribe/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
+	// if len(dst) < hl+ml {
+	// 	return 0, fmt.Errorf("subscribe/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
 
 	if err := sp.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
+	dst := make([]byte, sp.Len())
 
 	total := 0
 
 	n, err := sp.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return 0, nil, err
 	}
 
 	// SUBSCRIBE报文必须要有PackeId
 	if sp.PacketID() == 0 {
-		return total, fmt.Errorf("subscribe/Encode: invalid packetid %d", sp.PacketID())
+		return 0, nil, fmt.Errorf("subscribe/Encode: invalid packetid %d", sp.PacketID())
 	}
 
 	binary.BigEndian.PutUint16(dst[total:total+2], sp.packetID)
@@ -159,14 +160,14 @@ func (sp *SubscribePacket) Encode(dst []byte) (int, error) {
 		n, err := writeLPBytes(dst[total:], t)
 		total += n
 		if err != nil {
-			return total, err
+			return 0, nil, err
 		}
 
 		dst[total] = sp.qos[i]
 		total++
 	}
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (sp *SubscribePacket) msglen() int {

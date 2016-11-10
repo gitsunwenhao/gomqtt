@@ -134,46 +134,47 @@ func (pp *PublishPacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (pp *PublishPacket) Encode(dst []byte) (int, error) {
+func (pp *PublishPacket) Encode() (int, []byte, error) {
 
 	if len(pp.topic) == 0 {
-		return 0, fmt.Errorf("publish/Encode: Topic name is empty.")
+		return 0, nil, fmt.Errorf("publish/Encode: Topic name is empty.")
 	}
 
 	if len(pp.payload) == 0 {
-		return 0, fmt.Errorf("publish/Encode: Payload is empty.")
+		return 0, nil, fmt.Errorf("publish/Encode: Payload is empty.")
 	}
 
 	ml := pp.msglen()
 
 	if err := pp.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
 
-	hl := pp.header.msglen()
+	// hl := pp.header.msglen()
 
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("publish/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
+	// if len(dst) < hl+ml {
+	// 	return 0, nil, fmt.Errorf("publish/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
+	dst := make([]byte, pp.Len())
 
 	total := 0
 
 	n, err := pp.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return 0, nil, err
 	}
 
 	n, err = writeLPBytes(dst[total:], pp.topic)
 	total += n
 	if err != nil {
-		return total, err
+		return 0, nil, err
 	}
 
 	//QoS不为0时，必须要传PacketID
 	if pp.QoS() != 0 {
 		if pp.PacketID() == 0 {
-			return total, fmt.Errorf("publish/Encode: invalid packetid %d when qos == 0", pp.PacketID())
+			return 0, nil, fmt.Errorf("publish/Encode: invalid packetid %d when qos == 0", pp.PacketID())
 		}
 
 		binary.BigEndian.PutUint16(dst[total:total+2], pp.packetID)
@@ -185,7 +186,7 @@ func (pp *PublishPacket) Encode(dst []byte) (int, error) {
 	copy(dst[total:], pp.payload)
 	total += len(pp.payload)
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (pp *PublishPacket) msglen() int {

@@ -16,6 +16,12 @@ func (pp *PingrespPacket) Decode(src []byte) (int, error) {
 	return pp.header.decode(src)
 }
 
-func (pp *PingrespPacket) Encode(dst []byte) (int, error) {
-	return pp.header.encode(dst)
+// func (pp *PingrespPacket) Encode(dst []byte) (int, error) {
+// 	return pp.header.encode(dst)
+// }
+
+func (pp *PingrespPacket) Encode() (int, []byte, error) {
+	dst := make([]byte, pp.Len())
+	n, err := pp.header.encode(dst)
+	return n, dst, err
 }

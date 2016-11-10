@@ -63,8 +63,8 @@ type Packet interface {
 	// 报文的唯一ID
 	PacketID() uint16
 
-	// 对message进行编码， 写入字节数组
-	Encode([]byte) (int, error)
+	// 对message进行编码， 写入字节数组并返回
+	Encode() (int, []byte, error)
 
 	// 对字节数组进行解码，生成message
 	Decode([]byte) (int, error)

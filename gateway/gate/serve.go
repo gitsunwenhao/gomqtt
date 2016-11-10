@@ -13,20 +13,7 @@ import (
 	"github.com/uber-go/zap"
 )
 
-type connInfo struct {
-	id int
-	c  net.Conn
-	cp *proto.ConnectPacket
-
-	inCount  int
-	outCount int
-
-	stopped bool
-}
-
 func serve(c net.Conn) {
-	defer c.Close()
-
 	// init a new connInfo
 	ci := &connInfo{}
 
@@ -35,20 +22,30 @@ func serve(c net.Conn) {
 	ci.c = c
 	Logger.Debug("a new connection has established", zap.Int("cid", ci.id), zap.String("ip", c.RemoteAddr().String()))
 
+	defer func() {
+		c.Close()
+		delCI(ci.id)
+	}()
+
 	//----------------Connection init---------------------------------------------
 	err := initConnection(ci)
 	if err != nil {
 		return
 	}
 
+	// save ci
+	saveCI(ci)
+
+	ci.stopped = make(chan bool)
 	go recvPacket(ci)
+
 	// loop reading data
 	for {
-		if ci.stopped {
+		select {
+		case <-ci.stopped:
+			Logger.Info("main thread is going to stop")
 			goto STOP
 		}
-
-		select {}
 	}
 
 STOP:
@@ -63,7 +60,7 @@ func initConnection(ci *connInfo) error {
 
 	pt, buf, n, err := service.ReadPacket(ci.c)
 	if err != nil {
-		Logger.Warn("Read packet error", zap.Error(err), zap.Object("buf", buf), zap.Int("bytes", n), zap.Int("cid", ci.id))
+		Logger.Warn("Read packet error", zap.Error(err), zap.String("buf", fmt.Sprintf("%v", buf)), zap.Int("bytes", n), zap.Int("cid", ci.id))
 
 		if code, ok := err.(proto.ConnackCode); ok {
 			reply.SetReturnCode(code)
@@ -83,7 +80,8 @@ func initConnection(ci *connInfo) error {
 
 	ci.cp = cp
 
-	Logger.Debug("user connected!", zap.String("user", tools.Bytes2String(ci.cp.Username())), zap.String("password", tools.Bytes2String(ci.cp.Password())), zap.Int("cid", ci.id))
+	Logger.Debug("user connected!", zap.String("user", tools.Bytes2String(ci.cp.Username())), zap.String("password", tools.Bytes2String(ci.cp.Password())), zap.Int("cid", ci.id),
+		zap.Float64("keepalive", float64(cp.KeepAlive())))
 
 	// validate the user
 	ok = userValidate(ci.cp.Username(), ci.cp.Password())
@@ -100,6 +98,8 @@ func initConnection(ci *connInfo) error {
 		Logger.Info("write packet error", zap.Error(err), zap.Int("cid", ci.id))
 		return err
 	}
+
+	ci.lastPacketTime = time.Now()
 
 	return nil
 }

@@ -16,6 +16,8 @@ func (dp *DisconnectPacket) Decode(src []byte) (int, error) {
 	return dp.header.decode(src)
 }
 
-func (dp *DisconnectPacket) Encode(dst []byte) (int, error) {
-	return dp.header.encode(dst)
+func (dp *DisconnectPacket) Encode() (int, []byte, error) {
+	dst := make([]byte, dp.Len())
+	n, err := dp.header.encode(dst)
+	return n, dst, err
 }

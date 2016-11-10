@@ -42,31 +42,31 @@ func (pp *PubackPacket) Decode(src []byte) (int, error) {
 	return total, nil
 }
 
-func (pp *PubackPacket) Encode(dst []byte) (int, error) {
+func (pp *PubackPacket) Encode() (int, []byte, error) {
 
-	hl := pp.header.msglen()
+	// hl := pp.header.msglen()
 	ml := pp.msglen()
-
-	if len(dst) < hl+ml {
-		return 0, fmt.Errorf("puback/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
-	}
+	// if len(dst) < hl+ml {
+	// 	return 0, fmt.Errorf("puback/Encode: Insufficient buffer size. Expecting %d, got %d.", hl+ml, len(dst))
+	// }
 
 	if err := pp.SetRemainingLength(int32(ml)); err != nil {
-		return 0, err
+		return 0, nil, err
 	}
 
+	dst := make([]byte, pp.Len())
 	total := 0
 
 	n, err := pp.header.encode(dst[total:])
 	total += n
 	if err != nil {
-		return total, err
+		return 0, nil, err
 	}
 
 	binary.BigEndian.PutUint16(dst[total:total+2], pp.packetID)
 	total += 2
 
-	return total, nil
+	return total, dst, nil
 }
 
 func (pp *PubackPacket) msglen() int {

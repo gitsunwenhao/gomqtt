@@ -6,10 +6,9 @@ import (
 )
 
 func adminStart() {
-	// 启动Http服务
 	e := echo.New()
 
-	// 启动配置热更新
+	// configuration hot update
 	e.GET("/reload", reload)
 
 	e.Run(standard.New(":8907"))
