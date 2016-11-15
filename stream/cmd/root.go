@@ -50,14 +50,6 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.Flags().BoolP("static_config", "c", false, "using static config")
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-
-	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.stream.yaml)")
-	// // Cobra also supports local flags, which will only run
-	// // when this action is called directly.
-	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -85,4 +77,5 @@ func start(cmd *cobra.Command, args []string) {
 	chSig := make(chan os.Signal)
 	signal.Notify(chSig, syscall.SIGINT, syscall.SIGTERM)
 	<-chSig
+	stream.Close()
 }

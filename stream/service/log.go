@@ -55,4 +55,5 @@ func InitLogger(lp string, lv string, isDebug bool) {
 			level,
 		)
 	}
+	log.SetFlags(log.Lmicroseconds | log.Lshortfile | log.LstdFlags)
 }
