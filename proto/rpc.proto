@@ -12,6 +12,8 @@ service Rpc {
     rpc GChat(GChatMsg) 		returns (Reply) 	{}
 
     // 用户相关接口
+    rpc LogIn (UserMsg)         returns (Reply) 	{}
+    rpc LogOut(UserMsg)         returns (Reply) 	{}
 }
 
 // 广播
@@ -32,6 +34,11 @@ message PChatMsg {
 
 // 群播
 message GChatMsg {
+
+}
+
+// 用户信息
+message UserMsg {
 
 }
 
