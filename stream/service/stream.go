@@ -1,65 +1,69 @@
 package service
 
 import (
-	"log"
-
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 )
 
 type Stream struct {
-	etcd        *Etcd
-	streamAddrs *StreamAddrs
-	grpc        *Grpc
+	upa   *UpdateAddr
+	rpc   *Rpc
+	cache *Cache
+	hash  *Hash
 }
 
 var gStream *Stream
 
 func New() *Stream {
-	return &Stream{}
+	stream := &Stream{}
+	return stream
 }
 
 func (s *Stream) Init() {
 
 	// init etcd
-	etcd := NewEtcd()
-	etcd.Init()
+	upa := NewUpdateAddr()
+	upa.Init()
 
-	// init stream addrs
-	streamAddrs := NewStreamAddrs()
-	streamAddrs.Init(etcd.ReportKey, Conf.GrpcC.Addr)
+	// init cache
+	cache := NewCache()
+	cache.Init()
 
-	// init grpc service
-	grpc := NewGrpc()
-	grpc.Init()
+	// init rpc service
+	rpc := NewRpc()
+	rpc.Init()
 
+	// hash 初始化
+	hash := NewHash()
 	//	init other
 
-	s.streamAddrs = streamAddrs
-	s.grpc = grpc
-	s.etcd = etcd
+	s.rpc = rpc
+	s.upa = upa
+	s.cache = cache
+	s.hash = hash
 
 	gStream = s
 }
 
 func (s *Stream) Start(isStatic bool) {
-	log.Println(isStatic)
+
 	loadConfig(isStatic)
 
 	// stream 初始化所有功能服务
 	s.Init()
 
-	// grpc start
-	s.grpc.Start()
+	// rpc start
+	s.rpc.Start()
 
-	// etcd start
-	s.etcd.Start()
+	// upa start
+	s.upa.Start()
 
 	go httpStart()
 }
 
 func (s *Stream) Close() error {
-	s.etcd.Close()
+	s.upa.Close()
+	s.rpc.Close()
 	return nil
 }
 
@@ -72,3 +76,18 @@ func httpStart() {
 
 	e.Run(standard.New(":8907"))
 }
+
+// GetAddrKey  获取上报stream地址的key
+// func GetAddrKey(rootDir string) (string, error) {
+
+// 	keylen := len(rootDir)
+// 	if keylen > 0 && rootDir[keylen-1] != '/' {
+// 		rootDir = rootDir + "/"
+// 	}
+
+// 	host, err := os.Hostname()
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	return fmt.Sprintf("%s%s-%d", rootDir, host, os.Getpid()), nil
+// }

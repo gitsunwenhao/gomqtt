@@ -13,6 +13,8 @@ type Config struct {
 	CommonC *CommonConfig
 	EtcdC   *EtcdConfig
 	GrpcC   *GrpcConfig
+
+	StreamAddrs map[string]string
 }
 
 func (c *Config) Show() {

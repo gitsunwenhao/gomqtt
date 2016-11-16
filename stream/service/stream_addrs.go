@@ -30,10 +30,20 @@ func (sa *StreamAddrs) Add(key, addr string) bool {
 		sa.RUnlock()
 		return true
 	}
+	sa.RUnlock()
+
 	sa.Lock()
 	sa.Addrs[key] = addr
 	sa.Unlock()
 	return false
+}
+
+func (sa *StreamAddrs) Get(key string) (string, bool) {
+	sa.RLock()
+	addr, ok := sa.Addrs[key]
+	sa.RUnlock()
+
+	return addr, ok
 }
 
 func (sa *StreamAddrs) Del(key string) {
