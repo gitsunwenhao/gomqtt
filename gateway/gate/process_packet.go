@@ -43,34 +43,3 @@ func pingReq(ci *connInfo) {
 	service.WritePacket(ci.c, pb)
 }
 
-func publish(ci *connInfo, p *proto.PublishPacket) error {
-	// need give back the ack
-	if p.QoS() == 1 {
-		pb := proto.NewPubackPacket()
-		pb.SetPacketID(p.PacketID())
-		service.WritePacket(ci.c, pb)
-	}
-	return nil
-}
-
-func subscribe(ci *connInfo, p *proto.SubscribePacket) error {
-	pb := proto.NewSubackPacket()
-	pb.SetPacketID(p.PacketID())
-
-	// return the final qos level
-	for i := 0; i < len(p.Qos()); i++ {
-		pb.AddReturnCodes([]byte{proto.QosAtLeastOnce})
-	}
-
-	service.WritePacket(ci.c, pb)
-
-	return nil
-}
-
-func unsubscribe(ci *connInfo, p *proto.UnsubscribePacket) error {
-	pb := proto.NewUnsubackPacket()
-	pb.SetPacketID(p.PacketID())
-
-	service.WritePacket(ci.c, pb)
-	return nil
-}

@@ -34,6 +34,11 @@ type Config struct {
 		Key   string
 	}
 
+	Mqtt struct {
+		QosMax       byte
+		MaxKeepalive uint16
+	}
+
 	StreamAddrs map[string]string
 }
 

@@ -99,6 +99,10 @@ func initConnection(ci *connInfo) error {
 		return err
 	}
 
+	// if keepalive == 0 ,we should specify a default keepalive
+	if ci.cp.KeepAlive() == 0 {
+		ci.cp.SetKeepAlive(Conf.Mqtt.MaxKeepalive)
+	}
 	ci.lastPacketTime = time.Now()
 
 	return nil

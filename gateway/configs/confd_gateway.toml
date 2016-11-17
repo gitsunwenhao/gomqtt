@@ -13,5 +13,7 @@ keys = [
         "/gomqtt/gateway/tlskey",
 	"/gomqtt/gateway/etcdaddrs",
 	"/gomqtt/gateway/etcdkey",
+        "/gomqtt/gateway/qosmax",
+        "/gomqtt/gateway/maxkeepalive",
 ]
 reload_cmd = "/Users/sunfei/Documents/GoLibs/src/github.com/aiyun/gomqtt/gateway/gateway reload"

@@ -19,7 +19,8 @@ func recvPacket(ci *connInfo) {
 		//check
 		now := time.Now()
 
-		if now.Sub(ci.lastPacketTime).Seconds() > float64(ci.cp.KeepAlive()) {
+		// according to mqtt protocol, interval should be greater than 1.5 * keepalive
+		if now.Sub(ci.lastPacketTime).Seconds() > 1.5*float64(ci.cp.KeepAlive()) {
 			Logger.Info("not activity,stopped")
 			break
 		}

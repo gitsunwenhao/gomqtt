@@ -26,3 +26,8 @@ addrs = [
         {{end}}
 ]
 key = "{{getv "/gomqtt/gateway/etcdkey"}}"
+
+
+[mqtt]
+qos_max = {{getv  "/gomqtt/gateway/qosmax"}}
+max_keepalive = {{getv  "/gomqtt/gateway/maxkeepalive"}}
