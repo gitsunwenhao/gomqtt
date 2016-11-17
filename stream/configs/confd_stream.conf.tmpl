@@ -1,5 +1,19 @@
 [common]
-version = "{{getv "/gomqtt/stream/version"}}"
-is_debug = {{getv "/gomqtt/stream/isdebug"}}
-log_level = "{{getv "/gomqtt/stream/loglevel"}}"
-log_path = "{{getv "/gomqtt/stream/logpath"}}"
+version = "{{getv "/gomqtt/stream/common/version"}}"
+is_debug = {{getv "/gomqtt/stream/common/isdebug"}}
+log_level = "{{getv "/gomqtt/stream/common/loglevel"}}"
+log_path = "{{getv "/gomqtt/stream/common/logpath"}}"
+
+[etcd]
+addrs = [
+        {{range getvs "/gomqtt/stream/etcd/addrs/*"}}
+        "{{.}}",
+        {{end}}
+]
+dltimeout = {{getv "/gomqtt/stream/etcd/dltimeout"}}
+rqtimeout = {{getv "/gomqtt/stream/etcd/rqtimeout"}}
+reportdir = {{getv "/gomqtt/stream/etcd/reportdir"}}
+
+
+[grpc]
+addr = {{getv "/gomqtt/stream/grpc/addr"}}

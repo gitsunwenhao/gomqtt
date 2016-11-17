@@ -2,9 +2,15 @@
 src = "confd_stream.conf.tmpl"
 dest = "/etc/gomqtt/stream.toml"
 keys = [
-        "/gomqtt/stream/version",
-        "/gomqtt/stream/isdebug",
-        "/gomqtt/stream/loglevel",
-        "/gomqtt/stream/logpath",
+        "/gomqtt/stream/common/version",
+        "/gomqtt/stream/common/isdebug",
+        "/gomqtt/stream/common/loglevel",
+        "/gomqtt/stream/common/logpath",
+        "/gomqtt/stream/etcd/addrs",
+        "/gomqtt/stream/etcd/dltimeout",
+        "/gomqtt/stream/etcd/rqtimeout",
+        "/gomqtt/stream/etcd/reportdir",
+        "/gomqtt/stream/grpc/addr",
 ]
+
 reload_cmd = "/Users/scc/Documents/gowork/src/github.com/aiyun/gomqtt/stream/stream reload"
