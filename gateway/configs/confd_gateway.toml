@@ -6,13 +6,17 @@ keys = [
         "/gomqtt/gateway/isdebug",
         "/gomqtt/gateway/loglevel",
         "/gomqtt/gateway/logpath",
+        
         "/gomqtt/gateway/invoked",
         "/gomqtt/gateway/tcpaddr",
         "/gomqtt/gateway/enabletls",
         "/gomqtt/gateway/tlscert",
         "/gomqtt/gateway/tlskey",
+
 	"/gomqtt/gateway/etcdaddrs",
-	"/gomqtt/gateway/etcdkey",
+	"/gomqtt/gateway/etcd/streams",
+        "/gomqtt/gateway/etcd/rooms",
+
         "/gomqtt/gateway/qosmax",
         "/gomqtt/gateway/maxkeepalive",
 ]

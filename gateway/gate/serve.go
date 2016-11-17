@@ -43,7 +43,7 @@ func serve(c net.Conn) {
 	for {
 		select {
 		case <-ci.stopped:
-			Logger.Info("main thread is going to stop")
+			Logger.Info("user's main thread is going to stop")
 			goto STOP
 		}
 	}
