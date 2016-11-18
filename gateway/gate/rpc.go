@@ -31,7 +31,7 @@ func (r *Rpc) Close(addr string) {
 	r.conn.Close()
 }
 
-// 用户登录接口
+// 用户登录接口1
 func (r *Rpc) LogIn(acm *rpc.AccMsg) error {
 	req, err := r.client.LogIn(context.Background(), acm)
 	if err != nil {
