@@ -5,8 +5,8 @@ log_level = "debug"
 log_path = "./out.log"
 
 [etcd]
-addrs = ["127.0.0.1:2379"]
-#addrs = ["10.7.24.191:2379",  "10.7.24.192:2379",]
+#addrs = ["127.0.0.1:2379"]
+addrs = ["10.7.24.191:2379",  "10.7.24.192:2379",]
 dltimeout = 10
 rqtimeout = 10
 reportTime = 10
