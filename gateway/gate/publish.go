@@ -14,3 +14,7 @@ func publish(ci *connInfo, p *proto.PublishPacket) error {
 	}
 	return nil
 }
+
+func puback(ci *connInfo, p *proto.PubackPacket) error {
+	return nil
+}

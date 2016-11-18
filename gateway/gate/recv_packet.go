@@ -13,7 +13,7 @@ func recvPacket(ci *connInfo) {
 		close(ci.stopped)
 	}()
 
-	wait := time.Duration(ci.cp.KeepAlive())*time.Second + 10*time.Second
+	wait := time.Duration(ci.cp.KeepAlive())*time.Second - 10*time.Second
 
 	for {
 		// We need to considering about the network delay,so here allows 10 seconds delay.

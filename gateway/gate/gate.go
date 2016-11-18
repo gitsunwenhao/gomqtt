@@ -22,5 +22,5 @@ func (g *Gate) Start(isStatic bool) {
 	go adminStart()
 
 	// start the monitors
-	// monitorsStart()
+	monitorsStart()
 }

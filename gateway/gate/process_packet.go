@@ -12,6 +12,7 @@ import (
 
 func processPacket(ci *connInfo, pt proto.Packet) error {
 	var err error
+
 	switch p := pt.(type) {
 	case *proto.DisconnectPacket: // recv Disconnect
 		Logger.Info("Disconnect")
@@ -21,6 +22,7 @@ func processPacket(ci *connInfo, pt proto.Packet) error {
 		err = publish(ci, p)
 
 	case *proto.PubackPacket:
+		err = puback(ci, p)
 
 	case *proto.SubscribePacket:
 		err = subscribe(ci, p)
@@ -42,4 +44,3 @@ func pingReq(ci *connInfo) {
 	pb := proto.NewPingrespPacket()
 	service.WritePacket(ci.c, pb)
 }
-
