@@ -93,47 +93,47 @@ func (rpc *Rpc) LogIn(ctx context.Context, am *proto.AccMsg) (*proto.Reply, erro
 
 	Logger.Info("LogIn", zap.Object("user", user))
 
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // LogOut 登出
 func (rpc *Rpc) LogOut(ctx context.Context, am *proto.AccMsg) (*proto.Reply, error) {
 
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // ---------------- 订阅相关接口  ----------------
 
 // Subscribe 订阅
 func (rpc *Rpc) Subscribe(ctx context.Context, tm *proto.TcMsg) (*proto.Reply, error) {
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // UnSubscribe 取消订阅
 func (rpc *Rpc) UnSubscribe(ctx context.Context, tm *proto.TcMsg) (*proto.Reply, error) {
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // BPull 拉取广播推送
 func (rpc *Rpc) BPull(ctx context.Context, bm *proto.BPushMsg) (*proto.Reply, error) {
 
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // SPull 拉取单播推送
 func (rpc *Rpc) SPull(ctx context.Context, sm *proto.SPushMsg) (*proto.Reply, error) {
 
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // PPull 拉取私聊
 func (rpc *Rpc) PPull(ctx context.Context, pm *proto.PChatMsg) (*proto.Reply, error) {
 
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }
 
 // GPull 拉取群聊
 func (rpc *Rpc) GPull(ctx context.Context, gm *proto.GChatMsg) (*proto.Reply, error) {
 
-	return &proto.Reply{}, nil
+	return &proto.Reply{Msg: "帅帅帅帅"}, nil
 }

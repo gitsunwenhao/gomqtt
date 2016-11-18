@@ -1,9 +1,6 @@
 package service
 
-import (
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/standard"
-)
+import "github.com/labstack/echo"
 
 type Stream struct {
 	upa   *UpdateAddr
@@ -74,7 +71,12 @@ func httpStart() {
 	// 启动配置热更新
 	e.GET("/reload", reload)
 
-	e.Run(standard.New(":8907"))
+	// e.Run(standard.New(":8907"))
+
+	err := e.Start(":8907")
+	if err != nil {
+		e.Logger.Fatal(err.Error())
+	}
 }
 
 // GetAddrKey  获取上报stream地址的key
