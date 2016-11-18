@@ -20,6 +20,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/aiyun/gomqtt/gateway/dispatch"
 	"github.com/aiyun/gomqtt/gateway/gate"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -72,6 +73,9 @@ func start(cmd *cobra.Command, args []string) {
 	isStatic, _ := cmd.Flags().GetBool("static_config")
 	g := gate.New()
 	g.Start(isStatic)
+
+	d := dispatch.New()
+	go d.Start()
 
 	// 等待服务器停止信号
 	chSig := make(chan os.Signal)

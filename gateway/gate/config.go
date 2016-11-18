@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"stathat.com/c/consistent"
+
 	"fmt"
 
 	"os"
@@ -43,11 +45,17 @@ type Config struct {
 		MaxKeepalive uint16
 	}
 
+	Dispatch struct {
+		Addr string
+	}
+
 	StreamAddrs map[string]string
 	RoomAddrs   map[string]string
 }
 
 var Conf = &Config{}
+
+var Consist *consistent.Consistent
 
 func loadConfig(staticConf bool) {
 	var contents []byte
@@ -117,14 +125,20 @@ func watchEtcd(cli *clientv3.Client) {
 
 		for wresp := range rch {
 			for _, ev := range wresp.Events {
+				v := string(ev.Kv.Value)
 				if ev.Type == 0 { // PUT
-					Conf.RoomAddrs[string(ev.Kv.Key)] = string(ev.Kv.Value)
+					Conf.RoomAddrs[string(ev.Kv.Key)] = v
 				} else {
 					delete(Conf.RoomAddrs, string(ev.Kv.Key))
 				}
 			}
 
-			// Logger.Debug("get new room addrs", zap.Object("addrs", Conf.RoomAddrs))
+			Consist = consistent.New()
+			for _, v := range Conf.RoomAddrs {
+				Consist.Add(v)
+			}
+
+			Logger.Debug("get new room addrs", zap.Object("addrs", Conf.RoomAddrs), zap.Object("consist_addrs", Consist.Members()))
 		}
 	}()
 }
@@ -147,7 +161,7 @@ func uploadEtcd(cli *clientv3.Client) {
 				Logger.Warn("etcd put error", zap.Error(err))
 			}
 
-			time.Sleep(20 * time.Second)
+			time.Sleep(30 * time.Second)
 		}
 	}()
 

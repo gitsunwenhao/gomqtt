@@ -31,3 +31,6 @@ rooms = "{{getv "/gomqtt/gateway/etcd/rooms"}}"
 [mqtt]
 qos_max = {{getv  "/gomqtt/gateway/qosmax"}}
 max_keepalive = {{getv  "/gomqtt/gateway/maxkeepalive"}}
+
+[dispatch]
+addr = "{{getv  "/gomqtt/gateway/dispatch/addr"}}"
