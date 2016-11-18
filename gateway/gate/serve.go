@@ -36,7 +36,7 @@ func serve(c net.Conn) {
 	// save ci
 	saveCI(ci)
 
-	ci.stopped = make(chan bool)
+	ci.stopped = make(chan struct{})
 	go recvPacket(ci)
 
 	// loop reading data
@@ -103,7 +103,6 @@ func initConnection(ci *connInfo) error {
 	if ci.cp.KeepAlive() == 0 {
 		ci.cp.SetKeepAlive(Conf.Mqtt.MaxKeepalive)
 	}
-	ci.lastPacketTime = time.Now()
 
 	return nil
 }

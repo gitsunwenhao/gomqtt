@@ -138,7 +138,7 @@ func watchEtcd(cli *clientv3.Client) {
 				Consist.Add(v)
 			}
 
-			Logger.Debug("get new room addrs", zap.Object("addrs", Conf.RoomAddrs), zap.Object("consist_addrs", Consist.Members()))
+			// Logger.Debug("get new room addrs", zap.Object("addrs", Conf.RoomAddrs), zap.Object("consist_addrs", Consist.Members()))
 		}
 	}()
 }

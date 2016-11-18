@@ -3,7 +3,6 @@ package gate
 import (
 	"net"
 	"sync"
-	"time"
 
 	proto "github.com/aiyun/gomqtt/mqtt/protocol"
 )
@@ -13,12 +12,10 @@ type connInfo struct {
 	c  net.Conn
 	cp *proto.ConnectPacket
 
-	lastPacketTime time.Time
-	inCount        int
-	outCount       int
+	inCount  int
+	outCount int
 
-	isStopped bool
-	stopped   chan bool
+	stopped chan struct{}
 
 	relogin bool
 }
