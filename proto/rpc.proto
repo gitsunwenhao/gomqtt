@@ -12,8 +12,12 @@ service Rpc {
     rpc GChat(GChatMsg) 		returns (Reply) 	{}
 
     // 用户相关接口
-    rpc LogIn (UserMsg)         returns (Reply) 	{}
-    rpc LogOut(UserMsg)         returns (Reply) 	{}
+    rpc LogIn (AccMsg)         returns (Reply) 	{}
+    rpc LogOut(AccMsg)         returns (Reply) 	{}
+
+    // 用户订阅相关
+    rpc Subscribe (TcMsg)         returns (Reply) 	{}
+    rpc UnSubscribe (TcMsg)       returns (Reply) 	{}
 }
 
 // 广播
@@ -37,11 +41,18 @@ message GChatMsg {
 
 }
 
-// 用户信息
-message UserMsg {
-
+// 用户账户
+message AccMsg {
+    string  an      = 1;      //账户名
+    string  un      = 2;      //子用户名
+    int32   conVer  = 3;      //链接版本号
+    string  gip     = 4;      //gateway ip地址
 }
 
+// 主题消息
+message TcMsg {
+
+}
 
 
 message Reply {

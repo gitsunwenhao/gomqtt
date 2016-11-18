@@ -13,7 +13,8 @@ It has these top-level messages:
 	SPushMsg
 	PChatMsg
 	GChatMsg
-	UserMsg
+	AccMsg
+	TcMsg
 	Reply
 */
 package proto
@@ -76,14 +77,27 @@ func (m *GChatMsg) String() string            { return proto1.CompactTextString(
 func (*GChatMsg) ProtoMessage()               {}
 func (*GChatMsg) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
-// 用户信息
-type UserMsg struct {
+// 用户账户
+type AccMsg struct {
+	An     string `protobuf:"bytes,1,opt,name=an" json:"an,omitempty"`
+	Un     string `protobuf:"bytes,2,opt,name=un" json:"un,omitempty"`
+	ConVer int32  `protobuf:"varint,3,opt,name=conVer" json:"conVer,omitempty"`
+	Gip    string `protobuf:"bytes,4,opt,name=gip" json:"gip,omitempty"`
 }
 
-func (m *UserMsg) Reset()                    { *m = UserMsg{} }
-func (m *UserMsg) String() string            { return proto1.CompactTextString(m) }
-func (*UserMsg) ProtoMessage()               {}
-func (*UserMsg) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (m *AccMsg) Reset()                    { *m = AccMsg{} }
+func (m *AccMsg) String() string            { return proto1.CompactTextString(m) }
+func (*AccMsg) ProtoMessage()               {}
+func (*AccMsg) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+// 主题消息
+type TcMsg struct {
+}
+
+func (m *TcMsg) Reset()                    { *m = TcMsg{} }
+func (m *TcMsg) String() string            { return proto1.CompactTextString(m) }
+func (*TcMsg) ProtoMessage()               {}
+func (*TcMsg) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 type Reply struct {
 	Msg string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
@@ -92,14 +106,15 @@ type Reply struct {
 func (m *Reply) Reset()                    { *m = Reply{} }
 func (m *Reply) String() string            { return proto1.CompactTextString(m) }
 func (*Reply) ProtoMessage()               {}
-func (*Reply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (*Reply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 func init() {
 	proto1.RegisterType((*BPushMsg)(nil), "proto.BPushMsg")
 	proto1.RegisterType((*SPushMsg)(nil), "proto.SPushMsg")
 	proto1.RegisterType((*PChatMsg)(nil), "proto.PChatMsg")
 	proto1.RegisterType((*GChatMsg)(nil), "proto.GChatMsg")
-	proto1.RegisterType((*UserMsg)(nil), "proto.UserMsg")
+	proto1.RegisterType((*AccMsg)(nil), "proto.AccMsg")
+	proto1.RegisterType((*TcMsg)(nil), "proto.TcMsg")
 	proto1.RegisterType((*Reply)(nil), "proto.Reply")
 }
 
@@ -120,8 +135,11 @@ type RpcClient interface {
 	PChat(ctx context.Context, in *PChatMsg, opts ...grpc.CallOption) (*Reply, error)
 	GChat(ctx context.Context, in *GChatMsg, opts ...grpc.CallOption) (*Reply, error)
 	// 用户相关接口
-	LogIn(ctx context.Context, in *UserMsg, opts ...grpc.CallOption) (*Reply, error)
-	LogOut(ctx context.Context, in *UserMsg, opts ...grpc.CallOption) (*Reply, error)
+	LogIn(ctx context.Context, in *AccMsg, opts ...grpc.CallOption) (*Reply, error)
+	LogOut(ctx context.Context, in *AccMsg, opts ...grpc.CallOption) (*Reply, error)
+	// 用户订阅相关
+	Subscribe(ctx context.Context, in *TcMsg, opts ...grpc.CallOption) (*Reply, error)
+	UnSubscribe(ctx context.Context, in *TcMsg, opts ...grpc.CallOption) (*Reply, error)
 }
 
 type rpcClient struct {
@@ -168,7 +186,7 @@ func (c *rpcClient) GChat(ctx context.Context, in *GChatMsg, opts ...grpc.CallOp
 	return out, nil
 }
 
-func (c *rpcClient) LogIn(ctx context.Context, in *UserMsg, opts ...grpc.CallOption) (*Reply, error) {
+func (c *rpcClient) LogIn(ctx context.Context, in *AccMsg, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
 	err := grpc.Invoke(ctx, "/proto.Rpc/LogIn", in, out, c.cc, opts...)
 	if err != nil {
@@ -177,9 +195,27 @@ func (c *rpcClient) LogIn(ctx context.Context, in *UserMsg, opts ...grpc.CallOpt
 	return out, nil
 }
 
-func (c *rpcClient) LogOut(ctx context.Context, in *UserMsg, opts ...grpc.CallOption) (*Reply, error) {
+func (c *rpcClient) LogOut(ctx context.Context, in *AccMsg, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
 	err := grpc.Invoke(ctx, "/proto.Rpc/LogOut", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rpcClient) Subscribe(ctx context.Context, in *TcMsg, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := grpc.Invoke(ctx, "/proto.Rpc/Subscribe", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rpcClient) UnSubscribe(ctx context.Context, in *TcMsg, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := grpc.Invoke(ctx, "/proto.Rpc/UnSubscribe", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -195,8 +231,11 @@ type RpcServer interface {
 	PChat(context.Context, *PChatMsg) (*Reply, error)
 	GChat(context.Context, *GChatMsg) (*Reply, error)
 	// 用户相关接口
-	LogIn(context.Context, *UserMsg) (*Reply, error)
-	LogOut(context.Context, *UserMsg) (*Reply, error)
+	LogIn(context.Context, *AccMsg) (*Reply, error)
+	LogOut(context.Context, *AccMsg) (*Reply, error)
+	// 用户订阅相关
+	Subscribe(context.Context, *TcMsg) (*Reply, error)
+	UnSubscribe(context.Context, *TcMsg) (*Reply, error)
 }
 
 func RegisterRpcServer(s *grpc.Server, srv RpcServer) {
@@ -276,7 +315,7 @@ func _Rpc_GChat_Handler(srv interface{}, ctx context.Context, dec func(interface
 }
 
 func _Rpc_LogIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserMsg)
+	in := new(AccMsg)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -288,13 +327,13 @@ func _Rpc_LogIn_Handler(srv interface{}, ctx context.Context, dec func(interface
 		FullMethod: "/proto.Rpc/LogIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RpcServer).LogIn(ctx, req.(*UserMsg))
+		return srv.(RpcServer).LogIn(ctx, req.(*AccMsg))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Rpc_LogOut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserMsg)
+	in := new(AccMsg)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -306,7 +345,43 @@ func _Rpc_LogOut_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/proto.Rpc/LogOut",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RpcServer).LogOut(ctx, req.(*UserMsg))
+		return srv.(RpcServer).LogOut(ctx, req.(*AccMsg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Rpc_Subscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TcMsg)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RpcServer).Subscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Rpc/Subscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RpcServer).Subscribe(ctx, req.(*TcMsg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Rpc_UnSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TcMsg)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RpcServer).UnSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Rpc/UnSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RpcServer).UnSubscribe(ctx, req.(*TcMsg))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -339,24 +414,37 @@ var _Rpc_serviceDesc = grpc.ServiceDesc{
 			MethodName: "LogOut",
 			Handler:    _Rpc_LogOut_Handler,
 		},
+		{
+			MethodName: "Subscribe",
+			Handler:    _Rpc_Subscribe_Handler,
+		},
+		{
+			MethodName: "UnSubscribe",
+			Handler:    _Rpc_UnSubscribe_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{},
 }
 
 var fileDescriptor0 = []byte{
-	// 221 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x2c, 0x2a, 0x48, 0xd6,
-	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x4a, 0x5c, 0x5c, 0x1c, 0x4e, 0x01, 0xa5,
-	0xc5, 0x19, 0xbe, 0xc5, 0xe9, 0x4a, 0x36, 0x5c, 0x1c, 0xc1, 0x50, 0xb6, 0x90, 0x04, 0x17, 0x7b,
-	0x49, 0x48, 0x7e, 0x41, 0x66, 0x72, 0xb1, 0x04, 0xa3, 0x02, 0xb3, 0x06, 0x4f, 0x10, 0x8c, 0x2b,
-	0x24, 0xc6, 0xc5, 0x56, 0xe2, 0x5f, 0x90, 0x99, 0x52, 0x2c, 0xc1, 0x04, 0x96, 0x80, 0xf2, 0x40,
-	0x26, 0x05, 0x38, 0x67, 0x24, 0x96, 0x80, 0x4c, 0x02, 0xb2, 0xdd, 0x61, 0x6c, 0x4e, 0x2e, 0xf6,
-	0xd0, 0xe2, 0xd4, 0x22, 0x10, 0x53, 0x92, 0x8b, 0x35, 0x28, 0xb5, 0x20, 0xa7, 0x52, 0x48, 0x80,
-	0x8b, 0x39, 0xb7, 0x38, 0x1d, 0x68, 0x32, 0xa3, 0x06, 0x67, 0x10, 0x88, 0x69, 0xd4, 0xc0, 0xc4,
-	0xc5, 0x1c, 0x54, 0x90, 0x2c, 0xa4, 0xc1, 0xc5, 0x0a, 0x76, 0x8f, 0x10, 0x3f, 0xc4, 0x9d, 0x7a,
-	0x30, 0xd7, 0x49, 0xf1, 0x40, 0x05, 0xc0, 0x26, 0x28, 0x31, 0x80, 0x54, 0x06, 0xa3, 0xa8, 0x0c,
-	0xc6, 0xa3, 0x12, 0xec, 0x32, 0xb8, 0x4a, 0x98, 0x3b, 0xb1, 0xa9, 0x74, 0x47, 0x51, 0xe9, 0x8e,
-	0x4b, 0xa5, 0x3a, 0x17, 0xab, 0x4f, 0x7e, 0xba, 0x67, 0x9e, 0x10, 0x1f, 0x54, 0x02, 0xea, 0x47,
-	0x2c, 0x46, 0xb2, 0x01, 0x15, 0xfa, 0x97, 0x96, 0x10, 0x52, 0x99, 0xc4, 0x06, 0xe6, 0x1a, 0x03,
-	0x02, 0x00, 0x00, 0xff, 0xff, 0x9e, 0xf5, 0xac, 0x62, 0xa5, 0x01, 0x00, 0x00,
+	// 291 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x8c, 0x90, 0xbd, 0x4e, 0xc3, 0x30,
+	0x14, 0x85, 0x69, 0x83, 0xd3, 0xe6, 0x52, 0x7e, 0xe4, 0x01, 0x05, 0x26, 0x94, 0x01, 0x82, 0x90,
+	0x3a, 0xc0, 0xca, 0x02, 0x0c, 0x11, 0x12, 0xa8, 0x95, 0x13, 0xd8, 0x1b, 0x13, 0xa5, 0x91, 0xc0,
+	0xb1, 0xe2, 0x78, 0xe0, 0x45, 0x79, 0x1e, 0x7c, 0x5d, 0x1b, 0xa9, 0xa2, 0xfc, 0x4c, 0x39, 0xc7,
+	0xf7, 0xd3, 0x27, 0x9d, 0x40, 0xd4, 0x49, 0x3e, 0x95, 0x5d, 0xdb, 0xb7, 0x94, 0xd8, 0x4f, 0x02,
+	0x30, 0xbe, 0x9d, 0x6b, 0xb5, 0x7c, 0x54, 0x75, 0x72, 0x0d, 0xe3, 0xdc, 0x65, 0x1a, 0xc3, 0xa8,
+	0x2f, 0x5a, 0xd9, 0x70, 0x15, 0x0f, 0x4e, 0x82, 0x74, 0xc2, 0x7c, 0xa5, 0x87, 0x10, 0xf6, 0x33,
+	0xd9, 0xbc, 0xa8, 0x78, 0x68, 0x0f, 0xae, 0xa1, 0x69, 0x7e, 0xb7, 0x5c, 0xf4, 0x68, 0x32, 0x39,
+	0xf3, 0x99, 0x41, 0x78, 0xc3, 0x39, 0x3a, 0xf7, 0x60, 0xb8, 0x10, 0x46, 0x37, 0x48, 0x23, 0x66,
+	0x12, 0x76, 0x2d, 0x8c, 0xc5, 0x76, 0x2d, 0xd0, 0xcc, 0x5b, 0xf1, 0x5c, 0x75, 0x71, 0x60, 0xde,
+	0x08, 0x73, 0x8d, 0x1e, 0x40, 0x50, 0x37, 0x32, 0xde, 0xb6, 0x20, 0xc6, 0x64, 0x04, 0xa4, 0x40,
+	0x65, 0x72, 0x04, 0x84, 0x55, 0xf2, 0xf5, 0x1d, 0x99, 0x37, 0x55, 0x3b, 0x39, 0xc6, 0xcb, 0x8f,
+	0x21, 0x04, 0x4c, 0x72, 0x9a, 0x02, 0xb1, 0x0b, 0xe9, 0xfe, 0x6a, 0xf9, 0xd4, 0xef, 0x3d, 0x9e,
+	0xb8, 0x07, 0x6b, 0x48, 0xb6, 0x90, 0xcc, 0xd7, 0xc8, 0xfc, 0x17, 0xd2, 0x6e, 0xfd, 0x22, 0xfd,
+	0xf2, 0x4d, 0x64, 0xb6, 0x46, 0x66, 0x3f, 0x91, 0xa7, 0x40, 0x1e, 0xda, 0xfa, 0x5e, 0xd0, 0x5d,
+	0x77, 0x58, 0xfd, 0xb5, 0x6f, 0xdc, 0x19, 0x84, 0x86, 0x9b, 0xe9, 0xfe, 0x2f, 0xf0, 0x1c, 0xa2,
+	0x5c, 0x97, 0x8a, 0x77, 0x4d, 0x59, 0x51, 0x7f, 0x2c, 0x36, 0xa2, 0x17, 0xb0, 0xf3, 0x24, 0xfe,
+	0x09, 0x97, 0xa1, 0xad, 0x57, 0x9f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x9d, 0xb3, 0xf3, 0xba, 0x4d,
+	0x02, 0x00, 0x00,
 }
