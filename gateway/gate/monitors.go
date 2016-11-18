@@ -17,7 +17,7 @@ func monitorLeaking() {
 		v, _ := r.Output()
 		fds := strings.Split(string(v), " ")[2]
 		Logger.Debug("goroutine和fd数目", zap.Int("goroutine", runtime.NumGoroutine()), zap.String("fd", fds))
-		time.Sleep(30 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 
 }

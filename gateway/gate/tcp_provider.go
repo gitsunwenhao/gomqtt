@@ -43,6 +43,8 @@ func (tp *TcpProvider) Start() {
 			Logger.Fatal("tls listen", zap.Error(err))
 			return
 		}
+
+		Logger.Debug("tls provider startted", zap.String("addr", Conf.Provider.TcpAddr))
 	}
 
 	// start accepting
