@@ -36,14 +36,14 @@ func serve(c net.Conn) {
 	// save ci
 	saveCI(ci)
 
-	ci.stopped = make(chan bool)
+	ci.stopped = make(chan struct{})
 	go recvPacket(ci)
 
 	// loop reading data
 	for {
 		select {
 		case <-ci.stopped:
-			Logger.Info("main thread is going to stop")
+			Logger.Info("user's main thread is going to stop")
 			goto STOP
 		}
 	}
@@ -99,7 +99,10 @@ func initConnection(ci *connInfo) error {
 		return err
 	}
 
-	ci.lastPacketTime = time.Now()
+	// if keepalive == 0 ,we should specify a default keepalive
+	if ci.cp.KeepAlive() == 0 {
+		ci.cp.SetKeepAlive(Conf.Mqtt.MaxKeepalive)
+	}
 
 	return nil
 }

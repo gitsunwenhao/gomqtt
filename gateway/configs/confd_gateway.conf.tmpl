@@ -25,4 +25,12 @@ addrs = [
         "{{.}}",
         {{end}}
 ]
-key = "{{getv "/gomqtt/gateway/etcdkey"}}"
+streams = "{{getv "/gomqtt/gateway/etcd/streams"}}"
+rooms = "{{getv "/gomqtt/gateway/etcd/rooms"}}"
+
+[mqtt]
+qos_max = {{getv  "/gomqtt/gateway/qosmax"}}
+max_keepalive = {{getv  "/gomqtt/gateway/maxkeepalive"}}
+
+[dispatch]
+addr = "{{getv  "/gomqtt/gateway/dispatch/addr"}}"
